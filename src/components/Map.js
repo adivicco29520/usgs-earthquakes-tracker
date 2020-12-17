@@ -8,7 +8,7 @@ import MapGL, { Marker,
 import Geocoder from "react-map-gl-geocoder";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBolt } from '@fortawesome/free-solid-svg-icons';
-// import { Icon } from '@iconify/react';
+import InfoBox from './InfoBox';
 
 
 // Set API Key from your Mapbox Account 
@@ -25,7 +25,7 @@ const EventMarker = ({ onClick }) => {
 
 const Map = ({ data }) => {
 
-    // const [locationInfo, setLocationInfo] = useState(null)
+    const [locationInfo, setLocationInfo] = useState(null)
     
     const [viewport, setViewport] = useState({
         latitude: 10,
@@ -56,21 +56,16 @@ const Map = ({ data }) => {
     const markers = data.map(e => {
         return(
             <Marker key = {e.id} latitude={e.geometry.coordinates[1]} longitude = {e.geometry.coordinates[0]}>
-                <EventMarker/>
+                <EventMarker onClick = {() => {setLocationInfo({ id:e.id,
+                    eventName: e.properties.title,
+                    magnitude: e.properties.mag,
+                    url: e.properties.url, 
+                    depth: e.geometry.coordinates[2],
+                    time: e.properties.time
+                    })}}/>
             </Marker>
         )
-        // console.log(e.geometry.coordinates[1])
-        
     })
-    // console.log(markers)
-    //     if(e.categories[0].id === 8) {
-    //             return (
-    //             <Marker key = {e.id} latitude={e.geometries[0].coordinates[1]} longitude = {e.geometries[0].coordinates[0]}>
-    //                 <WildfireMarker onClick = {() => {setLocationInfo({ id:e.id, title: e.title, date:new Date(e.geometries[0].date), url:e.sources[0].url })}}/>
-    //             </Marker>
-    //             )}
-    //             return null
-    //         })
 
     return (
         <div className="map">
@@ -114,6 +109,10 @@ const Map = ({ data }) => {
 
                 {markers}
             </MapGL>
+
+            {/* Location Information Box */}
+            {locationInfo && <InfoBox info={locationInfo}/>}
+
         </div>
     )
 }
